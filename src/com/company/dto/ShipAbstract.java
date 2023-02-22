@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ShipAbstract extends Coordinate {
-    protected int pieces;
-    protected String type;
+    public int pieces;
+    public String type;
     List<Coordinate> coordinates = new ArrayList<>();
 }

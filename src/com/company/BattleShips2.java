@@ -1,9 +1,6 @@
 package com.company;
 
-import com.company.dto.Coordinate;
-import com.company.dto.Cruiser;
-import com.company.dto.Destroyer;
-import com.company.dto.ShipAbstract;
+import com.company.dto.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +25,8 @@ public class BattleShips2 extends ShipAbstract {
 
         //Step 2 ? Deploy playerÅfs ships
         //Deploying five ships for player
+        placeShips(new GameInviteRQ());
+
         BattleShips.playerShips = 1;
         List<ShipAbstract> ships = new ArrayList<>();
         ships.add(new Destroyer());
@@ -44,6 +43,118 @@ public class BattleShips2 extends ShipAbstract {
 
         //Step 5 - Game over
         gameOver();
+    }
+
+    public static Coordinate randomCoordinate(){
+        int xMin = 0, xMax = 19, yMin = 0, yMax = 7;
+        int xRand = 0;
+        int yRand = 0;
+        do{
+            xRand = (int) ((Math.random()) * (xMax - xMin + 1)) + xMin;
+            yRand = (int) ((Math.random()) * (yMax - yMin + 1)) + yMin;
+        }while (is_overlap_other_ship(xRand, yRand) != true);
+
+        return new Coordinate(xRand, yRand);
+    }
+
+    public void findOthersCoordinateOf(){
+
+    }
+
+
+    public static GameStartRS placeShips(GameInviteRQ ships){
+        GameStartRS response = new GameStartRS();
+
+        ships.ships.forEach(item -> {
+            // check type
+            switch (item.type){
+                case "DD":{
+                    // Generate Coordinate
+
+                    //Step1: Random
+                    Coordinate rootCoordinate = randomCoordinate();
+
+                    //Step2: find others Coordinate
+                    int lenOfShip = new BattleShip().pieces;
+                    boolean flag = false;
+                    // t?m theo chi?u ngang --> t?ng x
+                    if(is_overlap_other_ship(rootCoordinate.x, rootCoordinate.y + 1) != false){
+                        flag = true;
+                        Coordinate rootCoordinate2 = new Coordinate(rootCoordinate.x + 1, rootCoordinate.y);
+                    }
+                    if(flag = false){
+                        if(is_overlap_other_ship(rootCoordinate.x + 1, rootCoordinate.y) != false){
+                            flag = true;
+                            Coordinate rootCoordinate2 = new Coordinate(rootCoordinate.x + 1, rootCoordinate.y);
+                        }
+                    }
+                    if(flag = true){
+                        //Step3: add Coordinate to resp
+
+                        //step4: add to occupied
+
+                    }
+
+
+
+
+
+                    break;
+                }
+                case "BB":{
+                    // Generate Coordinate
+
+                    //Step1: Random
+                    Coordinate rootCoordinate = randomCoordinate();
+
+                    //Step2: check
+                    //Step3: add Coordinate to resp
+
+                    break;
+                }
+
+                case "CV":
+                {
+                    // Generate Coordinate
+
+                    //Step1: Random
+                    Coordinate rootCoordinate = randomCoordinate();
+
+                    //Step2: check
+                    //Step3: add Coordinate to resp
+
+                    break;
+                }
+                case "CA":
+                {
+                    // Generate Coordinate
+
+                    //Step1: Random
+                    Coordinate rootCoordinate = randomCoordinate();
+
+                    //Step2: check
+                    //Step3: add Coordinate to resp
+
+                    break;
+                }
+                case "OR":
+                {
+                    // Generate Coordinate
+
+                    //Step1: Random
+                    Coordinate rootCoordinate = randomCoordinate();
+
+                    //Step2: check
+                    //Step3: add Coordinate to resp
+
+                    break;
+                }
+                default:
+            }
+
+        });
+
+        return response;
     }
 
     public static void createOceanMap(){
@@ -84,10 +195,11 @@ public class BattleShips2 extends ShipAbstract {
 
     public static boolean is_overlap_other_ship(int x, int y){
         for (int i = 0; i < occupied.size(); i++) {
-            if(occupied.get(i).x == x & occupied.get(i).y == y)
+            if(occupied.get(i).x == x & occupied.get(i).y == y){
+                System.out.println("You can't place two or more ships on the same location");
                 return true;
+            }
         }
-        System.out.println("You can't place two or more ships on the same location");
         return false;
     }
 
