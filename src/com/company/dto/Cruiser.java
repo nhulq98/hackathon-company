@@ -1,8 +1,8 @@
-package com.company;
+package com.company.dto;
 
-public class CRUISER  extends ShipAbstract{
-    public CRUISER(){
-        this.pieces = 3;
+public class Cruiser extends ShipAbstract {
+    public Cruiser(){
+        this.pieces = 3; // with and height
         this.type = "CA";
 
         coordinates.add(new Coordinate(0, 1));

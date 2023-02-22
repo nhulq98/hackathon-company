@@ -1,10 +1,15 @@
 package com.company;
 
+import com.company.dto.Coordinate;
+import com.company.dto.Cruiser;
+import com.company.dto.Destroyer;
+import com.company.dto.ShipAbstract;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class BattleShips2 extends ShipAbstract{
+public class BattleShips2 extends ShipAbstract {
     public static int numRows = 8;
     public static int numCols = 20;
     public static int playerShips;
@@ -25,8 +30,8 @@ public class BattleShips2 extends ShipAbstract{
         //Deploying five ships for player
         BattleShips.playerShips = 1;
         List<ShipAbstract> ships = new ArrayList<>();
-        ships.add(new DESTROYER());
-        ships.add(new CRUISER());
+        ships.add(new Destroyer());
+        ships.add(new Cruiser());
         deployPlayerShips(ships);
 
         //Step 3 - Deploy computer's ships
