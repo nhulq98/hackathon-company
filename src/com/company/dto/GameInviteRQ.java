@@ -14,11 +14,11 @@ public class GameInviteRQ {
 
         //test
         this.ships = new ArrayList<>();
-//        ships.add(new ShipRQ("CV", 1));
-//        ships.add(new ShipRQ("BB", 1));
+        ships.add(new ShipRQ("CV", 1));
+        ships.add(new ShipRQ("BB", 1));
         ships.add(new ShipRQ("OR", 1));
-//        ships.add(new ShipRQ("CA", 1));
-//        ships.add(new ShipRQ("DD", 1));
+        ships.add(new ShipRQ("CA", 1));
+        ships.add(new ShipRQ("DD", 1));
         //-------END---------
     }
 }

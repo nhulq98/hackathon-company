@@ -5,8 +5,6 @@ import com.company.response.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BattleShips2 extends ShipAbstract {
     public static int numRows = 20;
@@ -49,10 +47,11 @@ public class BattleShips2 extends ShipAbstract {
     }
 
     public static List<Coordinate> findCoordinateByShip(ShipAbstractRS ship, int lenOfShip){
-        List<Coordinate> coordinates = new ArrayList<>();
+        List<Coordinate> coordinates;
         boolean isFindComplete = true; // Find coordinates finish
 
         do {
+            coordinates = new ArrayList<>();
             //Step1: Random
             Coordinate rootCoordinate = randomCoordinate();
             coordinates.add(rootCoordinate);
@@ -137,6 +136,8 @@ public class BattleShips2 extends ShipAbstract {
                     int lenOfShip = oilRigInfo.pieces;
                     boolean reRandom = false;
 
+                    List<Coordinate> remainCoordinates = new ArrayList<>();
+
                     for(int z = 0; z < item.quantity; z++){
 
                         OilRigRS oilRigRS = new OilRigRS();
@@ -145,6 +146,7 @@ public class BattleShips2 extends ShipAbstract {
                         boolean isFindComplete = false;
 
                         do {
+                            coordinates = new ArrayList<>();
                             //Step1: Random find rootCoordinate
                             Coordinate rootCoordinate = randomCoordinate();
                             coordinates.add(rootCoordinate);
@@ -188,7 +190,7 @@ public class BattleShips2 extends ShipAbstract {
                                 // Continue find all coordinate remain
                                 boolean turnAround = true;
 
-                                List<Coordinate> remainCoordinates = new ArrayList<>();
+                                remainCoordinates = new ArrayList<>();
 
                                 // Find continue
                                 if(direction.equals(HORIZON)){
@@ -218,9 +220,7 @@ public class BattleShips2 extends ShipAbstract {
                                         }
                                     }
 
-                                    if(remainCoordinates.size() == 2){ // find OK
-                                        coordinates.addAll(remainCoordinates);
-                                    }else{
+                                    if(remainCoordinates.size() != 2){
                                         turnAround = true;
                                         remainCoordinates = new ArrayList<>();
                                     }
@@ -251,9 +251,9 @@ public class BattleShips2 extends ShipAbstract {
                                             }
                                         }
                                     }
-                                    if(remainCoordinates.size() == 2){ // find OK
-                                        coordinates.addAll(remainCoordinates);
-                                    }else{
+                                    if(remainCoordinates.size() != 2){
+
+                                        remainCoordinates = new ArrayList<>();
                                         reRandom = true;
                                     }
                                 }
@@ -261,6 +261,7 @@ public class BattleShips2 extends ShipAbstract {
 
                         }while(reRandom == true);
 
+                        coordinates.addAll(remainCoordinates);
                         oilRigRS.coordinates = coordinates;
 
                         //Step3: add Coordinate to resp
@@ -294,85 +295,116 @@ public class BattleShips2 extends ShipAbstract {
 
                 case "CV": {
                     int lenOfShip = carrierInfo.pieces;
-
+                    List<Coordinate> remainCoordinates = new ArrayList<>();
                     for(int i = 0; i < item.quantity; i++){
                         CarrierRS carrierRS = new CarrierRS();
                         boolean isFindComplete = true;
+                        boolean turnAround = false;
                         String direction = HORIZON;
+                        boolean reRandom = false;
                         do {
+                            coordinates = new ArrayList<>();
                             //Step1: Random
                             Coordinate rootCoordinate = randomCoordinate();
                             coordinates.add(rootCoordinate);
 
-                            //Step2: find others Coordinate
+                            //Step2: find 3 root Coordinate
+                            if(direction == HORIZON){
+                                // t?m theo chi?u ngang --> t?ng x
+                                for (int x = 1; x < lenOfShip - 1; x++) {
+                                    int x1 = rootCoordinate.x + x;
+                                    int y1 = rootCoordinate.y;
 
-                            // t?m theo chi?u ngang --> t?ng x
-                            for (int y = 1; y < lenOfShip; y++) {
-                                direction = HORIZON;
-                                if (!is_overlap_other_ship(rootCoordinate.x, rootCoordinate.y + y) && !is_outside_board(rootCoordinate.x, rootCoordinate.y + y)) {
-                                    Coordinate coordinateHorizon = new Coordinate(rootCoordinate.x, rootCoordinate.y + y);
-                                    coordinates.add(coordinateHorizon);
-                                }else{
-                                    isFindComplete = false;
-                                }
-                            }
-                            if (isFindComplete == false) { // Tìm theo chiều dọc
-                                direction = VERTICAL;
-                                for (int x = 1; x < lenOfShip; x++) {
-                                    if (!is_overlap_other_ship(rootCoordinate.x + x, rootCoordinate.y) && !is_outside_board(rootCoordinate.x + x, rootCoordinate.y)) {
-                                        isFindComplete = true;
-                                        Coordinate coordinateVertical = new Coordinate(rootCoordinate.x + x, rootCoordinate.y);
-                                        coordinates.add(coordinateVertical);
+                                    if (!is_overlap_other_ship(x1, y1) && !is_outside_board(x1, y1)) {
+                                        Coordinate coordinateHorizon = new Coordinate(x1, y1);
+                                        coordinates.add(coordinateHorizon);
                                     }else{
-                                        isFindComplete = false;
+                                        turnAround = true;
+                                        direction = VERTICAL;
+                                        remainCoordinates = new ArrayList<>(); // find begin
+                                        break;
                                     }
                                 }
                             }
-                            boolean isOK = false;
-                            // Find continue
+
+                            if (turnAround == true) { // Tìm theo chiều dọc
+                                for (int y = 1; y < lenOfShip; y++) {
+                                    int x1 = rootCoordinate.x;
+                                    int y1 = rootCoordinate.y + y;
+
+                                    if (!is_overlap_other_ship(x1, y1) && !is_outside_board(x1, y1)) {
+                                        Coordinate coordinateVertical = new Coordinate(x1, y1);
+                                        coordinates.add(coordinateVertical);
+                                    }else{
+                                        //re-random
+                                        reRandom = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if(coordinates.size() == lenOfShip - 1){
+                                isFindComplete = true;
+                            }
+
+                            // step Final: Find final coordinate
                             if(isFindComplete == true){
+                                turnAround = false;
                                 Coordinate coordinate = coordinates.get(1);
                                 if(direction.equals(HORIZON)){
                                     int x = coordinate.x;
                                     int y = coordinate.y + 1;
                                     if(!is_outside_board(x, y) && !is_overlap_other_ship(x, y)){
-                                        isOK = true;
-                                        coordinates.add(new Coordinate(x, y));
+                                        remainCoordinates.add(new Coordinate(x, y));
+                                        // break to do while
+                                        break;
+                                    }else{
+                                        turnAround = true;
                                     }
 
-                                    if(isOK == false){
+                                    if(turnAround == true){
                                         int x1 = coordinate.x;
                                         int y1 = coordinate.y - 1;
                                         if(!is_outside_board(x1, y1) && !is_overlap_other_ship(x1, y1)){
-                                            isOK = true;
-                                            coordinates.add(new Coordinate(x1, y1));
+                                            remainCoordinates.add(new Coordinate(x1, y1));
+                                            break;
+                                        }else{
+                                            turnAround = true;
+                                            direction = VERTICAL;
                                         }
                                     }
 
-                                }else {
+                                }
+                                if(direction.equals(VERTICAL)){
                                     int x = coordinate.x + 1;
                                     int y = coordinate.y;
                                     if(!is_outside_board(x, y) && !is_overlap_other_ship(x, y)){
-                                        isOK = true;
-                                        coordinates.add(new Coordinate(x, y));
+                                        remainCoordinates.add(new Coordinate(x, y));
+                                        break;
                                     }
 
-                                    if(isOK == false){
+                                    if(turnAround == true){
                                         int x1 = coordinate.x - 1;
                                         int y1 = coordinate.y;
                                         if(!is_outside_board(x1, y1) && !is_overlap_other_ship(x1, y1)){
-                                            isOK = true;
-                                            coordinates.add(new Coordinate(x1, y1));
+                                            remainCoordinates.add(new Coordinate(x1, y1));
+                                            break;
+                                        }else{
+                                            reRandom = true;
                                         }
                                     }
                                 }
                             }
-                            if(isOK == false){
-                                isFindComplete = false; // re-radom
+                            if(remainCoordinates.size() == 1){
+                                break;
+                            }else{
+                                remainCoordinates = new ArrayList<>();
+                                reRandom = true;
                             }
 
-                        }while(isFindComplete != true);
+                        }while(reRandom == true);
 
+                        coordinates.addAll(remainCoordinates);
                         carrierRS.coordinates = coordinates;
 
                         //Step3: add Coordinate to resp
