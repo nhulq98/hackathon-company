@@ -1,8 +1,10 @@
 package com.company.dto;
 
+import com.company.response.ShipAbstractRS;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameStartRS {
-    public String type;
-    public List<Coordinate> coordinateList;
+    public List<ShipAbstractRS> ships = new ArrayList<>();
 }
