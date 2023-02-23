@@ -1,4 +1,4 @@
-package com.company.dto;
+package com.company.request;
 
 public class ShipRQ {
     public String type;

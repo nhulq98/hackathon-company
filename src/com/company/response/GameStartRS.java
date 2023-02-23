@@ -1,4 +1,4 @@
-package com.company.dto;
+package com.company.response;
 
 import com.company.response.ShipAbstractRS;
 

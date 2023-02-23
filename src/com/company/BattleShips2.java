@@ -1,6 +1,7 @@
 package com.company;
 
 import com.company.dto.*;
+import com.company.request.GameInviteRQ;
 import com.company.response.*;
 
 import java.util.ArrayList;
